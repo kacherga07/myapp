@@ -1,5 +1,5 @@
 import os, webbrowser, sys, requests, subprocess, pyttsx3, datetime
-import pyautogui
+import pyautogui, keyboard
 engine = pyttsx3.init()
 engine.setProperty('rate', 180)
 
@@ -50,8 +50,14 @@ def game():
     os.startfile("C:\\Program Files (x86)\\Steam\\steam.exe")
 
 def offpc():
-    #os.system('shutdown /s')
+    os.system('shutdown /s')
     speak("пк выключен")
+
+def write(wr):
+    keyboard.write(wr)
+
+def enter():
+    pyautogui.hotkey('enter')
 
 
 def weather():

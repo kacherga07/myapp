@@ -33,5 +33,8 @@ data_set = {
     'музыка': 'music',
     'рабочий стол': 'collapse_window',
     'пауза': 'pause',
-    'ютуб': 'youtube'
+    'ютуб': 'youtube',
+    'напиши': 'write',
+    'введи': 'write',
+    'интер': 'enter',
 }

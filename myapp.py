@@ -6,6 +6,10 @@ import sounddevice as sd  # pip install sounddevice
 import vosk  # pip install vosk
 import chat
 
+import pandas
+
+import numpy as np
+
 import json
 import queue
 
@@ -39,15 +43,15 @@ def recognize(data, vectorizer, clf):
     data = data.split()
     filtered_data = [word for word in data if word not in words.TRIGGERS]
     data = ' '.join(filtered_data)
-    print("Я векторизую слово: " + data)
+    #print("Я векторизую слово: " + data)
 
 
     # получаем вектор полученного текста
     # сравниваем с вариантами, получая наиболее подходящий ответ
     # Преобразование команды пользователя в числовой вектор
     user_command_vector = vectorizer.transform([data])
-    print("Получился вектор:")
-    print(user_command_vector)
+    #print("Получился вектор:")
+    #print(user_command_vector)
 
 
 
@@ -55,11 +59,12 @@ def recognize(data, vectorizer, clf):
     predicted_probabilities = clf.predict_proba(user_command_vector)
 
     # Задание порога совпадения
-    threshold = 0.1
+    threshold = 0.05
+
 
     # Поиск наибольшей вероятности и выбор ответа, если он превышает порог
     max_probability = max(predicted_probabilities[0])
-    print("Максимальная совместимость: " + str(max_probability))
+    #print("Максимальная совместимость: " + str(max_probability))
 
     if max_probability >= threshold:
         answer = clf.classes_[predicted_probabilities[0].argmax()]
@@ -69,11 +74,18 @@ def recognize(data, vectorizer, clf):
 
     func_name = answer.split()[0]
 
-    # озвучка ответа из модели data_set
-    speak(answer.replace(func_name, ''))
+    if func_name == 'write':
+        if len(data)<=9:
+            return
+        else:
+            wr = data.split(' ', 1)[1]
+            write(wr)
+    else:
+        # озвучка ответа из модели data_set
+        speak(answer.replace(func_name, ''))
 
-    # запуск функции из skills
-    exec(func_name + '()')
+        # запуск функции из skills
+        exec(func_name + '()')
 
 
 def main():
@@ -82,6 +94,9 @@ def main():
     # Обучение матрицы на data_set модели
     vectorizer = CountVectorizer()
     vectors = vectorizer.fit_transform(list(words.data_set.keys()))
+
+    #x = np.array(list(words.data_set.keys()))
+    #print(x)
 
 
     clf = LogisticRegression()
